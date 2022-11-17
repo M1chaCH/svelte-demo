@@ -4,6 +4,7 @@
   import {someStoredInput, someReadable, someDerived, customStore} from "./lib/store";
   import {onDestroy} from "svelte";
   import Motion from "./lib/Motion.svelte";
+  import { fade, fly } from "svelte/transition";
 
   let firstName: string = "Some";
   let secondName: string = "Guy";
@@ -181,7 +182,9 @@
   <h4>Lifecycle (console)</h4>
   <input type="checkbox" bind:checked={show} />
   {#if show}
-    <Lifecycle />
+    <div transition:fly={{x: 50, duration: 250}}>
+      <Lifecycle/>
+    </div>
   {/if}
 
   <h4>Stores</h4>
@@ -208,5 +211,7 @@
     flex-direction: column;
     gap: 10px;
     align-items: center;
+
+    margin-bottom: 40px;
   }
 </style>
