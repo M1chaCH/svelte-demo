@@ -5,6 +5,8 @@
   import {onDestroy} from "svelte";
   import Motion from "./lib/Motion.svelte";
   import { fade, fly } from "svelte/transition";
+  import Modal from "./lib/Modal.svelte";
+  import Slots from "./lib/Slots.svelte";
 
   let firstName: string = "Some";
   let secondName: string = "Guy";
@@ -47,6 +49,7 @@
   let checkboxes: string[] = [ "car", "cat", "dog", "yes", "oof", "..." ];
 
   let value: string;
+  const padding = "20px";
 
   let someDiv: HTMLDivElement | undefined;
   $: {
@@ -58,6 +61,9 @@
   let someInput: string = "none here yet ):"
   const someStoreUnSub: Function = someStoredInput.subscribe((value) => someInput = value) // writable store has a subscribe, update & set method
   onDestroy(() => someStoreUnSub()) // suggested to unsubscribe from stores when component is destroyed due to memory leaks
+
+  let toggled: boolean = false;
+  let fontSize: number = 20;
 
   function getPromise(): Promise<User[]> {
     return new Promise((resolve) => {
@@ -82,6 +88,11 @@
   function alertPlease() {
     alert("this is an alert. It will only be called once");
   }
+
+  /*
+  use module scrips as a replacement to angular services
+  https://svelte.dev/tutorial/module-exports
+  */
 </script>
 
 <main>
@@ -173,6 +184,7 @@
 
   <h4>bind short form: {value}</h4>
   <input type="text" bind:value/>
+  <!--{@debug value} acts as a breakpoint for all changes to value -->
 
   <h4>bind "this"</h4>
   <div bind:this={someDiv}>
@@ -203,6 +215,23 @@
   </div>
 
   <Motion />
+
+  <Modal />
+
+  <button on:click={() => toggled = !toggled} class:toggled class:green={!toggled} class="button">toggle</button>
+
+  <input type="range" max="30" min="10" step="1" bind:value={fontSize} />
+  <span class="span" style:--fontSize="{fontSize}px" style:padding>Please adjust</span>
+
+  <h2>Slots</h2>
+  <Slots>
+    <h1 slot="header">This is a cool header</h1>
+    <svelte:fragment slot="body">
+      some other random text
+    </svelte:fragment>
+    <h6 slot="footer">some footer</h6>
+  </Slots>
+  <Slots />
 </main>
 
 <style>
@@ -213,5 +242,25 @@
     align-items: center;
 
     margin-bottom: 40px;
+  }
+
+  .button {
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .toggled {
+    color: blue;
+  }
+
+  .green {
+    color: green;
+  }
+
+  .span {
+    --fontSize: 20px;
+    font-size: var(--fontSize);
+
+    transition: font-size 300ms ease-out;
   }
 </style>
