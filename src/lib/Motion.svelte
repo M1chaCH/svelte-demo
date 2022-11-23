@@ -1,5 +1,4 @@
 <script lang="ts">
-
   import {Spring, spring, Tweened, tweened} from "svelte/motion";
   import {cubicOut, elasticOut} from "svelte/easing";
   import {fade, fly} from "svelte/transition";
@@ -27,8 +26,20 @@
 
   let toggleAnimation: boolean = false;
 
+  let count: number = 0;
+  let y: number;
+  function handleCounterUpdate(increment: boolean) {
+    if(increment) {
+      count++;
+      y = -20;
+    } else {
+      count--;
+      y = 20;
+    }
+  }
+
   function customAnimation(_node, {
-        duration = 500,
+    duration = 500,
   }) {
     return {
       delay: 0,
@@ -76,11 +87,25 @@
         on:introstart={() => console.log("anim intro start")}
         on:outrostart={() => console.log("anim outro start")}
         on:introend={() => console.log("anim intro finished")}
-        on:outroend={() => console.log("anin outro finished")}>
+        on:outroend={() => console.log("anim outro finished")}>
     anim 4 with events
   </span>
+  <span in:fly={{ x: -20 }} out:fly={{x: 20}}>anim 5</span>
 {/if}
 <input type="checkbox" bind:checked={toggleAnimation}/>
+
+<h4>animated counter</h4>
+<button on:click={() => handleCounterUpdate(true)} style="z-index: 1">+</button>
+<div style="position: relative; width: fit-content; height: fit-content;">
+  {#key count}
+    <div style="display: inline-block; position: absolute; top: 50%; left: 50%; font-size: 20px; transform: translate(-50%, -50%); "
+         in:fly={{ y }}
+         out:fly={{ y: -y }}>
+      <span>{count}</span>
+    </div>
+  {/key}
+</div>
+<button on:click={() => handleCounterUpdate(false)} style="z-index: 1">-</button>
 
 <style lang="scss">
   .cursor-background-layer {
@@ -91,10 +116,6 @@
     height: 100vh;
     pointer-events: none;
 
-    .some-example {
-      color: red;
-    }
-
     svg {
       pointer-events: none;
       width: 100%;
@@ -103,6 +124,4 @@
       fill: rgba(0, 0, 0, 0.1);
     }
   }
-
-  
 </style>
