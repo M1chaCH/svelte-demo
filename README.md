@@ -1,6 +1,6 @@
 # svelte-demo
 Demo for learning and future reference of svelte
 
-- [ ] create svelte demo app
+- [x] create svelte demo app
 - [ ] create sveltekit demo app
 - [ ] create example app using svelte
