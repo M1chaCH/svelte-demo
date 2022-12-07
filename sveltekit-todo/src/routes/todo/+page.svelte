@@ -1,22 +1,25 @@
 <script lang="ts">
-    import type { PageData } from "./$types";
     import Todo from '$lib/components/Todo.svelte';
     import type {TodoDTO} from "$lib/types/TodoTypes";
-    import { quintOut } from 'svelte/easing';
     import { crossfade } from 'svelte/transition';
     import { flip } from 'svelte/animate';
+    import CreateTodo from "$lib/components/CreateTodo.svelte";
+    import type {ActionData} from "./$types";
+    import {page} from "$app/stores";
 
-    export let data: PageData[];
-    data = Object.values(data);
+    export let form: ActionData;
 
     let todos: TodoDTO[] = [];
     let doneTodos: TodoDTO[] = [];
 
-    data.forEach((todo: TodoDTO) => {
+    $page.data.todos.forEach((todo: TodoDTO) => {
        if(todo.done)
            doneTodos.push(todo);
        else
            todos.push(todo);
+
+        todos = todos.sort(sortByTitle);
+        doneTodos = doneTodos.sort(sortByTitle);
     });
 
     const doneChange = (event) => {
@@ -42,13 +45,15 @@
     });
 </script>
 
+<CreateTodo bind:form/>
+
 <h1>TODOs</h1>
 <div class="todos">
     {#each todos as todo (todo.id)}
         <div in:receive="{{key: todo.id}}"
              out:send="{{key: todo.id}}"
              animate:flip="{{duration: 200}}">
-            <Todo bind:todo on:doneChange={doneChange}></Todo>
+            <Todo bind:todo on:doneChange={doneChange} />
         </div>
 
     {/each}
@@ -56,7 +61,7 @@
         <div in:receive="{{key: todo.id}}"
              out:send="{{key: todo.id}}"
              animate:flip="{{duration: 200}}">
-            <Todo bind:todo on:doneChange={doneChange}></Todo>
+            <Todo bind:todo on:doneChange={doneChange} />
         </div>
     {/each}
 </div>
