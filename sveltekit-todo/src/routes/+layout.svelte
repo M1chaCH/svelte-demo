@@ -1,6 +1,21 @@
+<script lang="ts">
+    import {onMount} from "svelte";
+    import {supabase} from "$lib/supabaseClient";
+    import {invalidate} from "$app/navigation";
+
+    onMount(() => {
+        const { data: { subscription }, } = supabase.auth.onAuthStateChange(() => invalidate("supabase:auth"));
+
+        return () => {
+            subscription.unsubscribe();
+        }
+    });
+</script>
+
 <nav>
     <a href="/">Home</a>
     <a href="/todo">TODOs</a>
+    <a href="/account">Account</a>
 </nav>
 <div class="center">
     <slot></slot>
